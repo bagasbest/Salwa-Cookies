@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "209085845374",
-    "project_id": "pesenkue-49880",
-    "storage_bucket": "pesenkue-49880.appspot.com"
+    "project_number": "783759243126",
+    "project_id": "salwa-cookies",
+    "storage_bucket": "salwa-cookies.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:209085845374:android:0cdb44b31585892a706d2f",
+        "mobilesdk_app_id": "1:783759243126:android:36837c9812144d77a36c57",
         "android_client_info": {
           "package_name": "com.salwa.salwa"
         }
       },
       "oauth_client": [
         {
-          "client_id": "209085845374-n34tsl8t6b8rblqk6m1c985kuulb248k.apps.googleusercontent.com",
+          "client_id": "783759243126-confgft59vtn89c4oq0eebsk5ag2etae.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB7ejCSIg2tKYP2jbtesTyl5fQutT1J6vw"
+          "current_key": "AIzaSyCZP4fYcYJvxZKxmAfUySInr2LwC3C8Anw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "209085845374-n34tsl8t6b8rblqk6m1c985kuulb248k.apps.googleusercontent.com",
+              "client_id": "783759243126-confgft59vtn89c4oq0eebsk5ag2etae.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

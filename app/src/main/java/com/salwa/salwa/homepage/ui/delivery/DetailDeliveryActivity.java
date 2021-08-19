@@ -1,6 +1,7 @@
 package com.salwa.salwa.homepage.ui.delivery;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -94,7 +104,7 @@ public class DetailDeliveryActivity extends AppCompatActivity {
                 .error(R.drawable.ic_baseline_broken_image_24)
                 .into(binding.productDp);
 
-        if(deliveryStatus.equals("Sudah Dikirim")) {
+        if (deliveryStatus.equals("Sudah Dikirim")) {
             binding.deleteDelivery.setVisibility(View.VISIBLE);
         }
 
@@ -127,7 +137,7 @@ public class DetailDeliveryActivity extends AppCompatActivity {
                 .document(deliveryId)
                 .delete()
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
+                    if (task.isSuccessful()) {
                         binding.progressBar.setVisibility(View.GONE);
                         Toast.makeText(DetailDeliveryActivity.this, "Berhasil menghapus riwayat delivery ini", Toast.LENGTH_SHORT).show();
                     } else {
@@ -148,7 +158,7 @@ public class DetailDeliveryActivity extends AppCompatActivity {
         MenuItem item2 = menu.findItem(R.id.menu_delete).setVisible(false);
 
 
-        if(deliveryStatus.equals("Belum Dikirim")) {
+        if (deliveryStatus.equals("Belum Dikirim")) {
             // CEK APAKAH USER YANG SEDANG LOGIN ADMIN ATAU BUKAN, JIKA YA, MAKA TAMPILKAN IKON VERIFIKASI BUKTI PEMBAYARAN
             FirebaseFirestore
                     .getInstance()
@@ -211,7 +221,7 @@ public class DetailDeliveryActivity extends AppCompatActivity {
                 .document(deliveryId)
                 .update(delivery)
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
+                    if (task.isSuccessful()) {
                         binding.progressBar.setVisibility(View.GONE);
                         Toast.makeText(DetailDeliveryActivity.this, "Berhasil memperbarui status delivery menjadi Sudah Dikirim", Toast.LENGTH_SHORT).show();
                         binding.deleteDelivery.setVisibility(View.VISIBLE);
@@ -220,6 +230,49 @@ public class DetailDeliveryActivity extends AppCompatActivity {
                         Toast.makeText(DetailDeliveryActivity.this, "Gagal memperbarui delivery", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        // INPUT DATA YANG SUDAH TERDELIVERY KE EXCEL
+        inputDataToExcel();
+
+    }
+
+    private void inputDataToExcel() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://script.google.com/macros/s/AKfycbyVv8YOr44I6SWgSmxwapMWbaD0v_NysDY-We5jbm2SSxPaPqK4awk5lgDE3uYzDlTg/exec",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(DetailDeliveryActivity.this, response, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+
+        ) {
+            @Override
+            protected Map<String, String> getParams()  {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("action", "addItem");
+                params.put("addedAt", addedAt);
+                params.put("productName", title);
+                params.put("totalProduct", String.valueOf(totalProduct));
+                params.put("bookedBy", bookedBy);
+                params.put("price", String.valueOf(price));
+
+                return params;
+            }
+        };
+
+        int socketTimeOut = 50000;
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
     }
 
     @Override
